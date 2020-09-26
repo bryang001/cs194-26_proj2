@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CS194-26 Project 1</title>
+  <meta name="author" content="Bryan Yang">
+	<style>
+		body {
+			padding: 100px;
+			width: 90%;
+			margin: auto;
+			text-align: left;
+			font-weight: 300;
+     }
+		* {
+			box-sizing: border-box;
+		}
+		table.center {
+			margin-left: auto;
+			margin-right: auto;
+		}
+		td {
+			align: center;
+		}
+		figcaption {
+			align: center;
+		}
+		img {
+			max-width:100%;
+			max-height:100%;
+		}
+	</style>	
+</head>
+
+<body>
+  <h1>CS194-26 Project 1</h1>
+	<h3>Bryan Yang<h3>
+	<h2>Overview</h2>
+	<p>
+		The goal of this project is to explore different ways of using filters and frequencies in image processing.
+	</p>
+	<h2>Part 1: Fun with Filters</h2>
+	
+	<h3>Part 1.1: Finite Difference Operator</h3>
+	<p>
+		I started by taking the partial derivatives with respect to X and Y of the cameraman image by convolving the image with the finite difference operator. Next, I calculated the gradient magnitude by taking the square root of the sum of the squared derivatives (all element-wise), and binarized to get edges.
+	</p>
+	<div align="center">
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/1-1/grad-mag-x.jpg">
+						<figcaption>Partial WRT X</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-1/grad-mag-y.jpg">
+						<figcaption>Partial WRT Y</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-1/grad-mag.jpg">
+						<figcaption>Gradient Magnitude</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-1/grad-mag-thresh.jpg">
+						<figcaption>Edges</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h3>Part 1.2: Derivative of Gaussian (DoG) Filter</h3>
+	<p>
+		After blurring the image then calculating the gradient magnitude from the blurred image, I got an edge image with thicker outlines but less noise. Doing it the other way, with the DoG filter instead of taking the derivative of the blurred image, yielded similar results with <i>very</i> minor differences (a bit more noise).
+	</p>
+	<div>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/1-2/bl-d.jpg">
+						<figcaption>Gradient magnitude of blurred image</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-2/im-dog-mag.jpg">
+						<figcaption>Gradient magnitude with DoG filter</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h3>Part 1.3: Image Straightening</h3>
+	<p>
+		To figure out what the prominent angles in an image were, I took the partial derivatives then put them into arctan2 to find out the angles. I am not entirely sure what happened, but all my histograms came out in the range of 0 to &pi;/2, so I figure that any angles below 0 or above &pi;/2 wrap around. To score an image, I took a ratio of (lowest bin angle count + highest bin angle count) / total angle count. The histogram has 64 bins, the lowest bin is near 0 radians and the highest bin is near &pi;/2 radians.
+	</p>
+	<div>
+		<h4>Facade</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/1-3/facade/facade.jpg" />
+						<figcaption>Original</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/facade/facade_rot_-3.1.jpg" /> 
+						<figcaption>Rotated (-3.1&deg;)</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/1-3/facade/facade_hist.jpg" /> 
+						<figcaption>Original Angles</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/facade/facade_rot_crop_-3.1_hist.jpg" /> 
+						<figcaption>Rotated Angles</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<h4>Maze</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/1-3/maze/tilt-maze.jpg" />
+						<figcaption>Original</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/maze/tm_-3.0.jpg" />
+						<figcaption>Rotated (-3&deg;)</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/1-3/maze/tm_hist.jpg" />
+						<figcaption>Original Angles</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/maze/tm_crop_hist_-3.0.jpg" /> 
+						<figcaption>Rotated Angles</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<h4>Shoe</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/1-3/shoe/tilt-shoe.jpg" /> 
+						<figcaption>Original</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/shoe/ts_-2.0.jpg" /> 
+						<figcaption>Rotated (-2&deg;)</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/1-3/shoe/ts_hist.jpg" />
+						<figcaption>Original Angles</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/shoe/ts_crop_hist_-2.0.jpg" /> 
+						<figcaption>Rotated Angles</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div>
+		<h4>Shed</h4>
+		<p>
+			My image straightener did not work as well on this picture of a shed. The first thing my eye is drawn to is the red shed, and thus I expected the straightened version to be aligned with the small strip of ground between the shed and the grass. However, the porch steps to the right side of the image have sharper edges and thus the program aligned relative to those instead of the central feature.
+		</p>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/1-3/shed/tiltshed.jpg" /> 
+						<figcaption>Original</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/shed/ts_11.jpg" /> 
+						<figcaption>Rotated (11&deg;)</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/1-3/shed/ts_hist.jpg" /> 
+						<figcaption>Original Angles</figcaption>
+					</td>
+					<td>
+						<img src="./images/1-3/shed/ts_crop_hist_11.jpg" /> 
+						<figcaption>Rotated Angles</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h2>Part 2: Fun with Frequencies</h2>
+	
+	<h3>Part 2.1: Image "Sharpening"</h3>
+	<p>
+		I implemented the unsharp mask filter according to the equation covered in class, combining a high-pass filter and addition back to the source image into a single convolution. For the Taj Mahal image, the unsharp mask filter "sharpened" the details on the building but it also exacerbated the noise around the edges of the building, the people, and the bushes. The rock image did not have an obvious noise-enhancement issue.
+	</p>
+	<div>
+		<h4>Taj Mahal</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-1/taj.jpg" /> 
+						<figcaption>Original</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-1/taj_sharp.jpg" /> 
+						<figcaption>Sharpened</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h4>Rocks</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-1/rocks.jpg" />
+						<figcaption>Original</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-1/rocks_blur.jpg" />
+						<figcaption>Blurred</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-1/rocks_sharp.jpg" />
+						<figcaption>Sharpened</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h3>Part 2.2: Hybrid Images</h3>
+	<p>
+		For this part we create hybrid images, where the image looks like one thing close up but something different from a distance. For best results, the lon-distance/low-frequency image should be something that is recognizable by its general shape or prominent features, and not rely heavily on finer details for recognition. Going the opposite direction, the close-up/high-frequency image should have lots of high-frequency details that can be picked out from afar.
+		<br>
+		For my hybrid images, I aligned the images by the subjects' eyes, choosing images with higher frequecy features like fur as the "long-distance" image and images with smoother features like bare skin as the "close-up."
+	</p>
+	<div>
+		<h4>Mancat</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-2/mancat-fft/DerekPicture.jpg">
+						<figcaption>Derek (Low frequency)</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/mancat-fft/hybrid.jpg">
+						<figcaption>Hybrid</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/mancat-fft/nutmeg.jpg">
+						<figcaption>Nutmeg (High frequency)</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h5>Mancat Fourier Transforms</h5>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-2/mancat-fft/fft_man.jpg">
+						<figcaption>Derek FFT</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/mancat-fft/fft_low.jpg">
+						<figcaption>Derek Low-Pass FFT</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/mancat-fft/fft_hyb.jpg">
+						<figcaption>Hybrid FFT</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/mancat-fft/fft_high.jpg">
+						<figcaption>Nutmeg High-Pass FFT</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/mancat-fft/fft_cat.jpg">
+						<figcaption>Nutmeg FFT</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h4>Catdog</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-2/catdog/dog.jpg">
+						<figcaption>Dog (Low frequency)</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/catdog/no-log_8-4_gray.jpg">
+						<figcaption>Hybrid</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/catdog/cat.jpg">
+						<figcaption>Cat (High frequency)</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h4>Catdog</h4>
+		<p>
+			This one did not work as well. The two images are too similar in features and as such it is hard to distinguish which belong to the jaguar and not the leopard.
+		</p>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-2/bigcat/leopard.jpg">
+						<figcaption>Leopard (Low frequency)</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/bigcat/hybrid_3-2.jpg">
+						<figcaption>Hybrid</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-2/bigcat/jaguar.jpg">
+						<figcaption>Jaguar (High frequency)</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h3>Part 2.3: Gaussian and Laplacian Stacks</h3>
+	<p>
+		I created a Gaussian stack by starting at level 0 and convolving a Gaussian filter with &sigma;=2<sup>0</sup> over the source image, then on level 1 using a filter with &sigma;=2<sup>1</sup> on the level 0 image, and so on. I created the Laplacian stack by taking the difference between consecutive layers of the Gaussian stack, starting with <code>source-level0</code>, then <code>level0-level1</code>, and so on.
+	</p>
+	<div>
+		<h4>Lincoln</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-3/lincoln/linc_g_stack_0.jpg">
+						<figcaption>&sigma;=1</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_g_stack_1.jpg">
+						<figcaption>&sigma;=2</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_g_stack_2.jpg">
+						<figcaption>&sigma;=4</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_g_stack_3.jpg">
+						<figcaption>&sigma;=8</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_g_stack_4.jpg">
+						<figcaption>&sigma;=16</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/2-3/lincoln/linc_l_stack_0.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_l_stack_1.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_l_stack_2.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_l_stack_3.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/lincoln/linc_l_stack_4.jpg">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h4>Catdog</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-3/catdog/catdog_g_stack_0.jpg">
+						<figcaption>&sigma;=1</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_g_stack_1.jpg">
+						<figcaption>&sigma;=2</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_g_stack_2.jpg">
+						<figcaption>&sigma;=4</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_g_stack_3.jpg">
+						<figcaption>&sigma;=8</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_g_stack_4.jpg">
+						<figcaption>&sigma;=16</figcaption>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/2-3/catdog/catdog_l_stack_0.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_l_stack_1.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_l_stack_2.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_l_stack_3.jpg">
+					</td>
+					<td>
+						<img src="./images/2-3/catdog/catdog_l_stack_4.jpg">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<h3>Part 2.4: Multiresolution Blending</h3>
+	<p>
+		My implementation of multiresolution blending starts with generating the Gaussian and Laplacian stacks. Next it moves on to creating a mask, blurring it with a Gaussian filter, and applying it to each level of the Laplacian stacks. I sum the two masked Laplacian stacks level-wise to create the blended Laplacian stack, then create what would be the last level of the blended image's Gaussian stack by masking and summing together the last level of the source Gaussian stacks. Finally, I sum the entire blended stack into one, and add it to the blended Gaussian to create the final blended image.
+	</p>
+	<div>
+		<h4>Orapple</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-4/orapple/apple.jpeg">
+					</td>
+					<td>
+						<img src="./images/2-4/orapple/orapple.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/orapple/orange.jpeg">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h4>Professor Efrug</h4>
+		<p>
+			The EECS faculty pictures have a surprisingly large variety of head shapes and sizes, all at various angles. This makes it harder than you'd expect to find images that line up nicely; this was after some extra alignment.
+		</p>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-4/hufros/efros_align.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/hufros/hufros.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/hufros/hug_align.jpg">
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h4>The Man in the Moon</h4>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-4/moonfros/moon.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/blend_im.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/efros.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/mask.jpg">
+						<figcaption>Mask</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<h5>Gaussian and Laplacian Stacks</h5>
+		<table class="center">
+			<tbody>
+				<tr>
+					<td>
+						<img src="./images/2-4/moonfros/efros_mask_0.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/efros_mask_1.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/efros_mask_2.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/efros_mask_3.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/efros_mask_4.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/efros_mask_5.jpg">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/2-4/moonfros/blend_stack_0.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/blend_stack_1.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/blend_stack_2.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/blend_stack_3.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/blend_stack_4.jpg">
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/blend_stack_5.jpg">
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<img src="./images/2-4/moonfros/moon_mask_0.jpg">
+						<figcaption>&sigma;=1</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/moon_mask_1.jpg">
+						<figcaption>&sigma;=2</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/moon_mask_2.jpg">
+						<figcaption>&sigma;=4</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/moon_mask_3.jpg">
+						<figcaption>&sigma;=8</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/moon_mask_4.jpg">
+						<figcaption>&sigma;=16</figcaption>
+					</td>
+					<td>
+						<img src="./images/2-4/moonfros/moon_mask_5.jpg">
+						<figcaption>&sigma;=32</figcaption>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	
+</body>
+</html>
